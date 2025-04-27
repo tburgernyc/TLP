@@ -1,0 +1,97 @@
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import '../styles/Navigation.css';
+
+const Navigation = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 50;
+      if (isScrolled !== scrolled) {
+        setScrolled(isScrolled);
+      }
+    };
+
+    document.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      document.removeEventListener('scroll', handleScroll);
+    };
+  }, [scrolled]);
+
+  // Close menu when changing routes
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location]);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  return (
+    <nav className={`main-navigation ${scrolled ? 'scrolled' : ''}`}>
+      <div className="nav-container">
+        <Link to="/" className="logo">
+          <img src="/assets/images/tarot-light-path-logo.svg" alt="Tarot Light Path" />
+        </Link>
+
+        <div className={`menu-toggle ${menuOpen ? 'active' : ''}`} onClick={toggleMenu}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+
+        <ul className={`nav-links ${menuOpen ? 'active' : ''}`}>
+          <li>
+            <Link to="/" className={location.pathname === '/' ? 'active' : ''}>
+              Home
+            </Link>
+          </li>
+          <li>
+            <Link to="/services" className={location.pathname === '/services' ? 'active' : ''}>
+              Services
+            </Link>
+          </li>
+          <li>
+            <Link to="/shop" className={location.pathname === '/shop' ? 'active' : ''}>
+              Shop
+            </Link>
+          </li>
+          <li>
+            <Link to="/books" className={location.pathname === '/books' ? 'active' : ''}>
+              Books
+            </Link>
+          </li>
+          <li>
+            <Link to="/about" className={location.pathname === '/about' ? 'active' : ''}>
+              About Tim
+            </Link>
+          </li>
+          <li>
+            <Link to="/contact" className={location.pathname === '/contact' ? 'active' : ''}>
+              Contact
+            </Link>
+          </li>
+        </ul>
+
+        <div className="nav-actions">
+          <div className="search-icon">
+            <i className="fas fa-search"></i>
+          </div>
+          <Link to="/cart" className="cart-icon">
+            <i className="fas fa-shopping-cart"></i>
+            <span className="cart-count">0</span>
+          </Link>
+          <Link to="/services#booking" className="booking-button">
+            Book a Reading
+          </Link>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navigation;
